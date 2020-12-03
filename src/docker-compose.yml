@@ -6,7 +6,7 @@ services:
     ports:
       - "8500:8500"
     networks:
-      - sky-net
+      - my-net
       
   helloworld-server:
     build:
@@ -18,7 +18,7 @@ services:
     depends_on:
       - consul
     networks:
-      - sky-net
+      - my-net
 
   helloworld-client:
     build:
@@ -31,9 +31,9 @@ services:
       - consul
       - helloworld-server
     networks:
-      - sky-net
+      - my-net
 
 networks:
-  sky-net:
+  my-net:
     driver: bridge
   
