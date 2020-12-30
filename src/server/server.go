@@ -27,7 +27,9 @@ func serviceRegistryWithConsul() {
 
 	port, _ := strconv.Atoi(getPort()[1:len(getPort())])
 	address := getHostname()
+	/* Each service instance should have an unique serviceID */
 	serviceID := fmt.Sprintf("helloworld-server-%s:%v", address, port)
+	/* Tag should follow the rule of Fabio: urlprefix- */
 	tags := []string{"urlprefix-/helloworld"}
 
 	registration := &consulapi.AgentServiceRegistration{
@@ -35,7 +37,7 @@ func serviceRegistryWithConsul() {
 		Name:    "helloworld-server",
 		Port:    port,
 		Address: address,
-		Tags:    tags,
+		Tags:    tags, /* Add Tags for registration */
 		Check: &consulapi.AgentServiceCheck{
 			HTTP:     fmt.Sprintf("http://%s:%v/check", address, port),
 			Interval: "10s",
