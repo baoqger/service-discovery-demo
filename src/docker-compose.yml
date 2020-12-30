@@ -12,7 +12,7 @@ services:
     build:
       context: .
       dockerfile: server/Dockerfile
-    image: helloworld-server:1.0.1
+    image: helloworld-server:1.0.2
     environment: 
       - CONSUL_HTTP_ADDR=consul:8500
     depends_on:
@@ -24,14 +24,27 @@ services:
     build:
       context: .
       dockerfile: client/Dockerfile
-    image: helloworld-client:1.0.1
+    image: helloworld-client:1.0.2
     environment: 
-      - CONSUL_HTTP_ADDR=consul:8500 
+      - CONSUL_HTTP_ADDR=consul:8500
+      - FABIO_HTTP_ADDR=fabio:9999 
     depends_on:
       - consul
       - helloworld-server
     networks:
       - my-net
+  fabio:
+    image: fabiolb/fabio:latest
+    environment: 
+      - registry_consul_addr=consul:8500
+      - proxy_strategy=rr      
+    ports:
+      - "9998:9998"
+      - "9999:9999"
+    depends_on:
+      - consul  
+    networks:
+      - my-net 
 
 networks:
   my-net:

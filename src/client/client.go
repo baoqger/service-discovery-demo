@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"time"
 
 	consulapi "github.com/hashicorp/consul/api"
@@ -11,8 +12,12 @@ import (
 
 var url string
 
+/*
+For load balancing, run fabioLoadBalancing();
+For simple service discovery, run serviceDiscoveryWithConsul();
+*/
 func main() {
-	serviceDiscoveryWithConsul()
+	fabioLoadBalancing()
 	fmt.Println("Starting Client.")
 	var client = &http.Client{
 		Timeout: time.Second * 30,
@@ -20,6 +25,13 @@ func main() {
 	callServerEvery(10*time.Second, client)
 }
 
+/* Load balancing with Fabio */
+func fabioLoadBalancing() {
+	address := os.Getenv("FABIO_HTTP_ADDR")
+	url = fmt.Sprintf("http://%s/helloworld", address)
+}
+
+/* Service Discovery with Consul */
 func serviceDiscoveryWithConsul() {
 	config := consulapi.DefaultConfig()
 	consul, error := consulapi.NewClient(config)

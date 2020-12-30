@@ -25,15 +25,17 @@ func serviceRegistryWithConsul() {
 		log.Println(err)
 	}
 
-	serviceID := "helloworld-server"
 	port, _ := strconv.Atoi(getPort()[1:len(getPort())])
 	address := getHostname()
+	serviceID := fmt.Sprintf("helloworld-server-%s:%v", address, port)
+	tags := []string{"urlprefix-/helloworld"}
 
 	registration := &consulapi.AgentServiceRegistration{
 		ID:      serviceID,
 		Name:    "helloworld-server",
 		Port:    port,
 		Address: address,
+		Tags:    tags,
 		Check: &consulapi.AgentServiceCheck{
 			HTTP:     fmt.Sprintf("http://%s:%v/check", address, port),
 			Interval: "10s",
