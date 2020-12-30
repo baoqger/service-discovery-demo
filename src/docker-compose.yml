@@ -12,7 +12,7 @@ services:
     build:
       context: .
       dockerfile: server/Dockerfile
-    image: helloworld-server:1.0.2
+    image: helloworld-server:1.0.2 # upgrade to v1.0.2
     environment: 
       - CONSUL_HTTP_ADDR=consul:8500
     depends_on:
@@ -24,20 +24,21 @@ services:
     build:
       context: .
       dockerfile: client/Dockerfile
-    image: helloworld-client:1.0.2
+    image: helloworld-client:1.0.2 # upgrade to v1.0.2
     environment: 
       - CONSUL_HTTP_ADDR=consul:8500
-      - FABIO_HTTP_ADDR=fabio:9999 
+      - FABIO_HTTP_ADDR=fabio:9999 # environment variable for fabio service address
     depends_on:
       - consul
       - helloworld-server
     networks:
       - my-net
-  fabio:
+
+  fabio: # add a new service: Fabio as load balancer
     image: fabiolb/fabio:latest
     environment: 
-      - registry_consul_addr=consul:8500
-      - proxy_strategy=rr      
+      - registry_consul_addr=consul:8500 # environment variable for consul service address
+      - proxy_strategy=rr # environment variable for load balancing strategy. rr is round-robin      
     ports:
       - "9998:9998"
       - "9999:9999"
